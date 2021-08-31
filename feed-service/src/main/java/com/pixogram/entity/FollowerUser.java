@@ -9,13 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "follower_user", uniqueConstraints = @UniqueConstraint(columnNames = { "username", "followingUsername" }))
+@AllArgsConstructor
+@NoArgsConstructor
 public class FollowerUser implements Serializable {
 
 	/**
@@ -31,6 +35,12 @@ public class FollowerUser implements Serializable {
 		this.followUsernameURI = followUsernameURI;
 	}
 
+	public FollowerUser(User user) {
+		this.followingUsername = user.getUsername();
+		this.followName=user.getFirstName()+" "+user.getLastName();
+		this.followUsernameURI = user.getProfilePictureURL();
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -43,6 +53,10 @@ public class FollowerUser implements Serializable {
 	private String  usernameURI;
 
 	private String  followUsernameURI;
+	
+	private String name;
+	
+	private String followName;
 
 
 }

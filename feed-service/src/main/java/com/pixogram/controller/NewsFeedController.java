@@ -2,17 +2,20 @@ package com.pixogram.controller;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pixogram.common.CustomException;
 import com.pixogram.common.RestServiceTemplateUtils;
@@ -23,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/newsfeed")
+@RequestMapping("/newsfeed")
 public class NewsFeedController {
 	
 	private static final String NEWSFEED = "newsfeed"; 
@@ -33,12 +36,13 @@ public class NewsFeedController {
 	@Autowired
 	private NewsFeedService newsFeedService;
 	
-	@PostMapping("/saveNewsFeed")
-	public Map<String, Object> saveNewsFeed(@RequestBody() final NewsFeed feed,
+	@PostMapping("/saveNewsFeed/{username}")
+	public Map<String, Object> saveNewsFeed(@PathVariable("username") final String username,@RequestParam("description") final String feed,
+			@RequestParam("files") final List<MultipartFile> files,
 			final HttpServletResponse response) throws CustomException {
 		final Date startDate = new Date();
 		final Map<String, Object> map = new HashMap<>();
-		map.put(NEWSFEED, newsFeedService.saveNewsFeed(feed));
+		map.put(NEWSFEED, newsFeedService.saveNewsFeed(feed,files,username));
 		if (log.isInfoEnabled()) {
 			log.info("Rest url /saveNewsFeed from : ( " + startDate + TO + new Date() + ")");
 		}
@@ -57,8 +61,8 @@ public class NewsFeedController {
 		return RestServiceTemplateUtils.createdSuccessResponse(map, response);
 	}
 	
-	@GetMapping("/getMyNewsFeed")
-	public Map<String, Object> getMyNewsFeed(@RequestParam() final String username,
+	@GetMapping("/getMyNewsFeed/{username}")
+	public Map<String, Object> getMyNewsFeed(@PathVariable("username") final String username,
 			final HttpServletResponse response) throws CustomException {
 		final Date startDate = new Date();
 		final Map<String, Object> map = new HashMap<>();
@@ -73,7 +77,7 @@ public class NewsFeedController {
 	public Map<String, Object> deleteNewsFeed(@RequestParam("id") final long id,
 			final HttpServletResponse response) throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.newsFeedService.deleteNewsFeed(id));
+		map.put("newsfeed", this.newsFeedService.deleteNewsFeed(id));
 		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
 	}
 	

@@ -24,17 +24,18 @@ public class User implements Serializable {
 	private long id;
 	
 	private String username;
-	
+	private String firstName;
+	private String lastName;
+	private String password;
 	private String description;
-	
+	private String email;
+	private String gender;
+	private Date dateOfBirth;
 	private boolean status;
-	
-	private long followerCount;
-	
-	private long followingCount;
-	
+	private String role;
 	private String profilePictureURL;
-	
 	private Date createdDateTime;
+	private long followerCount;
+	private long followingCount;
 
 }

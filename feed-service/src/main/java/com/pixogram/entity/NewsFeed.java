@@ -5,10 +5,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedSubgraph;
@@ -16,16 +24,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Getter;
 import lombok.Setter;
 
-@NamedEntityGraph(
-	  name = "post-entity-graph",
-	  attributeNodes = {
-	    @NamedAttributeNode("user"),
-	    @NamedAttributeNode("comments")
-	  }
-	)
+//@NamedEntityGraph(
+//	  name = "newfeed",
+//	  attributeNodes = {
+//	    @NamedAttributeNode("comments"),
+//	    @NamedAttributeNode("media"),
+//	  }
+//	)
 @Entity
 @Getter
 @Setter
@@ -41,22 +51,26 @@ public class NewsFeed implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@NotNull
-	private long mediaId;
+	@JsonManagedReference
+	@OneToMany(mappedBy="newsfeed", cascade = CascadeType.ALL)
+	private List<Media> media;
 	
 	@NotNull
 	private String username;
 	
-	private long like;
+	private String usernameUri;
 	
-	private long likedBy;
+	@Column(columnDefinition = "bigint default 0")
+	private long likes;
 	
-	@OneToMany(mappedBy = "newsfeed")
+	@OneToMany(mappedBy="newsfeed", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 	
-	private String mediaCaption;
+	private String description;
 	
-	private Date postedDateTime;
+//	private String location;
+	
+	private Date postedDate;
 	
 
 }

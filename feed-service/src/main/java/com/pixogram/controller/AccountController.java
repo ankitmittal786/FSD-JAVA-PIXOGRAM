@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pixogram.common.CustomException;
 import com.pixogram.common.RestServiceTemplateUtils;
 import com.pixogram.service.AccountService;
+import com.pixogram.service.AccountServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,8 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("account")
 public class AccountController {
 	
-	@Autowired
+	
 	private AccountService accountService;	
+	
+	@Autowired
+	AccountController(){
+		accountService=new AccountServiceImpl();
+	}
 	
 	@GetMapping("/getFollowingUserList")
 	public Map<String, Object> getFollowingUserList(@RequestParam("userId") final String userId,

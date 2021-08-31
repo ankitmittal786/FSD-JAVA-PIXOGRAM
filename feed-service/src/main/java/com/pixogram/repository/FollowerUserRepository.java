@@ -12,17 +12,13 @@ import com.pixogram.entity.FollowerUser;
 @Repository
 public interface FollowerUserRepository extends JpaRepository<FollowerUser, Long> {
 
-	int changeStatusOfUser(long id, boolean status);
-
-	Map<String,String> findByFollowerUserId(long userId);
-
 	List<FollowerUser> findByUsername(String username);
 
 	List<FollowerUser> findByFollowingUsername(String username);
 
-	@Query("Select distinct fu.followingUsername from FollowerUser fu where a username=?1")
-	List<String> findFollowingUserNameByUsername(String username);
+	@Query("Select distinct fu.followingUsername from com.pixogram.entity.FollowerUser fu where fu.username=1")
+	List<String> findFollowingUsernameByUsername(String username);
 	
-	@Query("Select distinct fu from FollowerUser fu where a.username in (?1)")
+	@Query("Select distinct fu from com.pixogram.entity.FollowerUser fu where fu.username in (?1)")
 	List<FollowerUser> findByFollowingUsernameIn(List<String> username);
 }

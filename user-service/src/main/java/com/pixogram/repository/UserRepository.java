@@ -12,8 +12,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 	User findById(long id);
 
-	int changeStatusOfUser(long id, boolean status);
+//	int changeStatusOfUser(long id, boolean status);
 
-	User findUser(String username);
+	User findUserByUsername(String username);
+
+	User findByUsernameAndStatusTrue(String name);
+
+	User findByUsernameOrEmailAndStatusTrue(String username, String username2);
 
 }

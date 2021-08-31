@@ -1,12 +1,15 @@
 package com.pixogram.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pixogram.client.UserClient;
 import com.pixogram.entity.BlockedUser;
 import com.pixogram.entity.FollowerUser;
+import com.pixogram.entity.User;
 import com.pixogram.repository.BlockedUserRepository;
 import com.pixogram.repository.FollowerUserRepository;
 
@@ -20,6 +23,10 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Autowired
 	private FollowerUserRepository followerRepository;
+	
+	@Autowired
+	private UserClient userClient;
+	
 	
 
 	@Override
@@ -69,13 +76,22 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<String> getFollowingUserName(final String username) {
-		return this.followerRepository.findFollowingUserNameByUsername(username);
+		return this.followerRepository.findFollowingUsernameByUsername(username);
 	}
 
 	@Override
 	public List<FollowerUser> getSuggestedUserBasedOnMutual(String username) {
-		List<String> followingList=this.followerRepository.findFollowingUserNameByUsername(username);
-		return this.followerRepository.findByFollowingUsernameIn(followingList);
+		System.out.println("username -------: "+username);
+		List<FollowerUser> followingList=followerRepository.findByUsername(username);
+		if(followingList==null) {
+			System.out.println("username : --------");
+			List<User> users=userClient.getUserList();
+			return users.parallelStream().map(user->new FollowerUser(user)).collect(Collectors.toList());
+			
+		}
+		System.out.println("username : ----uuuuu----");
+		List<String> usernames=followingList.stream().map(data->data.getFollowingUsername()).collect(Collectors.toList());
+		return this.followerRepository.findByFollowingUsernameIn(usernames);
 	}
 
 }

@@ -3,13 +3,15 @@ package com.pixogram.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.pixogram.common.CustomException;
 import com.pixogram.entity.NewsFeed;
 
 @Service
 public interface NewsFeedService  {
 
-	NewsFeed saveNewsFeed(NewsFeed feed);
+	NewsFeed saveNewsFeed(String feed,List<MultipartFile> files, String username) throws CustomException;
 
 	List<NewsFeed> getLatestNewsFeed(String username);
 

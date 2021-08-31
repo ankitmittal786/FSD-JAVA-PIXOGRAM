@@ -3,7 +3,11 @@ package com.pixogram.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +18,9 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.pixogram.common.CustomException;
 import com.pixogram.config.AWSS3Config;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +33,7 @@ public class S3ServiceImpl implements S3Service {
 	private AWSS3Config config;
 	
 	 @Autowired
-	    private AmazonS3 aws3Client;
+	 private AmazonS3 aws3Client;
 	
 	@Override
 	public ByteArrayOutputStream downloadFile(String keyName) {
@@ -84,6 +90,22 @@ public class S3ServiceImpl implements S3Service {
         }
 		return null;
 	}
+
+	@Override
+	public boolean deleteimage(String uri) {
+		try {
+			String[] str=uri.split("/");
+			System.out.println("uri : "+uri);
+			String key=str[str.length-1];
+	    	System.out.println("key : "+key);
+	    	return config.deleteObject(key);
+		}
+		catch (AmazonClientException ace) {
+            logger.info("Caught an AmazonClientException: ");
+            logger.info("Error Message: " + ace.getMessage());
+            throw ace;
+        }
+	}
 	
 //	public List listFiles() {
 //		
@@ -112,5 +134,19 @@ public class S3ServiceImpl implements S3Service {
 //		
 //		return keys;
 //	}
+	
+	@Override
+	public Map<String,String> uploadFiles(List<MultipartFile> files,String username,long id) throws CustomException {
+		Map<String,String> map = new HashMap<>();
+		if (files != null && files.size() > 0) {
+			for(MultipartFile file : files) {
+				String keyName=username+"-"+new Date().getTime()+"-newfeed"+id+"-"+file.getName();
+				String uri=uploadFile(keyName, file);
+				map.put(keyName,uri);
+			}
+			return map;
+		}
+		throw new CustomException("RECORD_NOT_FOUND");
+	}
 
 }

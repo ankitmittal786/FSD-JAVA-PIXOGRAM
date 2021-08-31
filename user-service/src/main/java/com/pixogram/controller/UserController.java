@@ -1,5 +1,6 @@
 package com.pixogram.controller;
 
+import java.security.Principal;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pixogram.common.CustomException;
 import com.pixogram.common.RestServiceTemplateUtils;
@@ -30,6 +33,7 @@ import com.pixogram.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -41,7 +45,15 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping("/{id}")
+	@GetMapping("/getUser")
+	public ResponseEntity<User> user(Principal principal) {
+		final Date startDate = new Date();
+		User user = userService.getLoggedInUser(principal);
+		log.info("Rest url /getUser hitting time: from ( " + startDate + " ) to : ( " + new Date() + ")");
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+	
+	@PostMapping("/register/{id}")
 	public Map<String, Object> saveUser(@RequestBody @Valid final User user, final Errors errors,
 			@PathVariable final long id, final HttpServletResponse response) throws CustomException {
 		final List<String> errorList = RestServiceTemplateUtils.errorAfterSkipNull(errors);
@@ -54,11 +66,11 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/{id}")
-	public Map<String, Object> getUserWithId(@PathVariable("id") final long id, final HttpServletResponse response)
+	@GetMapping("/{username}")
+	public Map<String, Object> getUserWithId(@PathVariable("username") final String username, final HttpServletResponse response)
 			throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
-		map.put(USER, this.userService.findById(id));
+		map.put(USER, this.userService.findByUsername(username));
 		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
 	}
 	
@@ -89,61 +101,30 @@ public class UserController {
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 	
-	@GetMapping("/getFollowedUserList")
-	public Map<String, Object> getFollowedUserList(@RequestParam("userId") final long userId,
-			final HttpServletResponse response) throws CustomException {
+	@GetMapping("/check/{username}")
+	public Map<String, Object> checkUserWithUsername(@PathVariable("username") final String username, final HttpServletResponse response)
+			throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.getFollowedUserList(userId));
+		map.put(USER, this.userService.checkUserWithUsername(username));
 		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
 	}
 	
-	@GetMapping("/getFollowersUserList")
-	public Map<String, Object> getFollowersUserList(@RequestParam("userId") final long userId,
-			final HttpServletResponse response) throws CustomException {
+	@PostMapping("/uploadprofile/{username}")
+	public Map<String, Object> uploadprofile(@RequestParam("file") final MultipartFile file,
+			@PathVariable final String username, final HttpServletResponse response) throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.getFollowersUserList(userId));
+		map.put(USER, this.userService.uploadProfile(file, username));
+		return RestServiceTemplateUtils.createdSuccessResponse(map, response);
+	}
+	
+	@GetMapping("/getUserList")
+	public Map<String, Object> getUserList( final HttpServletResponse response)
+			throws CustomException {
+		final Map<String, Object> map = new HashMap<>();
+		map.put(USER, this.userService.getUserList());
 		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
 	}
 	
-	@GetMapping("/getBlockedUserList")
-	public Map<String, Object> getBlockedUserList(@RequestParam("userId") final long userId,
-			final HttpServletResponse response) throws CustomException {
-		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.getBlockedUserList(userId));
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
-	}
-	
-	@GetMapping("/blockUser")
-	public Map<String, Object> blockUser(@RequestParam("userId") final long userId,@RequestParam("id") final long id,
-			final HttpServletResponse response) throws CustomException {
-		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.blockUser(userId,id));
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
-	}
-	
-	@GetMapping("/unblockUser")
-	public Map<String, Object> unblockUser(@RequestParam("userId") final long userId,@RequestParam("id") final long id,
-			final HttpServletResponse response) throws CustomException {
-		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.unblockUser(userId,id));
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
-	}
-	
-	@GetMapping("/followUser")
-	public Map<String, Object> followUser(@RequestParam("userId") final long userId,@RequestParam("id") final long id,
-			final HttpServletResponse response) throws CustomException {
-		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.followUser(userId,id));
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
-	}
-	
-	@GetMapping("/unfollowUser")
-	public Map<String, Object> unfollowUser(@RequestParam("userId") final long userId,@RequestParam("id") final long id,
-			final HttpServletResponse response) throws CustomException {
-		final Map<String, Object> map = new HashMap<>();
-		map.put("userList", this.userService.unfollowUser(userId,id));
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
-	}
 	
 	
 	

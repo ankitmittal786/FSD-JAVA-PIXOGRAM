@@ -7,10 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.pixogram.common.CustomException;
 import com.pixogram.entity.Media;
+import com.pixogram.entity.NewsFeed;
 
 @Service
 public interface MediaService {
 
-	Media uploadMedia(List<MultipartFile> files,String username) throws CustomException;
+	List<Media> uploadMedia(List<MultipartFile> files,String username,NewsFeed feed) throws CustomException;
 
 }

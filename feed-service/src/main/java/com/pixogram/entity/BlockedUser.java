@@ -13,11 +13,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "blocked_user", uniqueConstraints = @UniqueConstraint(columnNames = { "username", "blockedUsername" }))
 public class BlockedUser implements Serializable {
 

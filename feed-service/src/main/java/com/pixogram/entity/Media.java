@@ -5,20 +5,28 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Entity
-@Table
 @Getter
 @Setter
+@NoArgsConstructor
 public class Media implements Serializable{
 	
 	/**
@@ -28,32 +36,26 @@ public class Media implements Serializable{
 	
 	
 
-	public Media(String username, @NotNull List<String> fileName, @NotNull List<String> mediaURL, String mimeType,
-			Date uploadedDate) {
+	public Media(@NotNull String fileName, @NotNull String mediaURL, NewsFeed feed) {
 		super();
-		this.username = username;
 		this.fileName = fileName;
 		this.mediaURL = mediaURL;
-		this.mimeType = mimeType;
-		this.uploadedDate = uploadedDate;
+		this.newsfeed=feed;
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	private String username;
+	@NotNull
+	private String fileName;
 	
 	@NotNull
-	@ElementCollection
-	private List<String> fileName;
+	private String mediaURL;
 	
-	@NotNull
-	@ElementCollection
-	private List<String> mediaURL;
-	
-	private String mimeType;
-	
-	private Date uploadedDate;
+	@JsonBackReference
+	@ManyToOne
+    @JoinColumn(name="newsfeed_id")
+    private NewsFeed newsfeed;
 	
 }

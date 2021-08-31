@@ -23,10 +23,10 @@ public class AWSS3Config {
 	    @Autowired
 	    private AmazonS3 aws3Client;
 	    
-	    @Value("${s3.bucket}")
+	    @Value("${aws.s3.bucket}")
 		private String bucketName;
 	    
-	    @Value("${s3.endpointUrl}")
+	    @Value("${aws.s3.endpointUrl}")
 	    private String endpointUrl;
 
 
@@ -51,7 +51,7 @@ public class AWSS3Config {
 	    public String createObject(String keyName, InputStream inputStream, ObjectMetadata metadata){
 	    	String uri=endpointUrl+"/"+bucketName+"/"+keyName;
 	        aws3Client.putObject(new PutObjectRequest(bucketName, keyName, inputStream, metadata).withCannedAcl(CannedAccessControlList.PublicRead));
-	        return uri;
+	        return aws3Client.getUrl(bucketName,  keyName).toString();
 	    }
 
 	    public void listObjects(){
@@ -66,8 +66,9 @@ public class AWSS3Config {
 //	        // write stream to file
 //	        FileUtils.copyInputStreamToFile(inputStream,new File("hello1.txt"));
 	    }
-	    public void deleteObject(){
-
+	    public boolean deleteObject(String key){
+	    	aws3Client.deleteObject(bucketName,key);
+	        return true;
 	    }
 
 }

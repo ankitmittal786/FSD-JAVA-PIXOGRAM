@@ -3,6 +3,7 @@ package com.pixogram.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,7 +22,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table
 public class Comment implements Serializable {
 
 	/**
