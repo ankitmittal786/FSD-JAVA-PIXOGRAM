@@ -66,7 +66,7 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/{username}")
+	@GetMapping("/getUser/{username}")
 	public Map<String, Object> getUserWithId(@PathVariable("username") final String username, final HttpServletResponse response)
 			throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
@@ -118,11 +118,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUserList")
-	public Map<String, Object> getUserList( final HttpServletResponse response)
+	public List<User> getUserList( final HttpServletResponse response)
 			throws CustomException {
 		final Map<String, Object> map = new HashMap<>();
-		map.put(USER, this.userService.getUserList());
-		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
+		return this.userService.getUserList();
+//		return RestServiceTemplateUtils.getRecordSuccessResponse(map, response);
 	}
 	
 	

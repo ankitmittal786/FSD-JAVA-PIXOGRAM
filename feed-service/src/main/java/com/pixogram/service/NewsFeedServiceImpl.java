@@ -31,12 +31,12 @@ public class NewsFeedServiceImpl implements NewsFeedService{
 	
 
 	@Override
-	public NewsFeed saveNewsFeed(String description,List<MultipartFile> files, String username) throws CustomException {
+	public NewsFeed saveNewsFeed(String description,List<MultipartFile> files, String username, String uri) throws CustomException {
 		NewsFeed feed=new NewsFeed();
 		feed.setDescription(description);
 		feed.setUsername(username);
 		feed.setPostedDate(new Date());
-		feed.setLikes(0);
+		feed.setUsernameUri(uri);
 		feed=repository.save(feed);
 		List<Media> media=mediaService.uploadMedia(files, username,feed);
 		System.out.println("Media---"+media.size());

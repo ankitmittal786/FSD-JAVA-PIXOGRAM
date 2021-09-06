@@ -42,6 +42,14 @@ import lombok.Setter;
 @Table(name = "newsfeed")
 public class NewsFeed implements Serializable {
 
+	public NewsFeed(long feedId) {
+		this.id=feedId;
+	}
+
+	public NewsFeed() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * 
 	 */
@@ -60,9 +68,11 @@ public class NewsFeed implements Serializable {
 	
 	private String usernameUri;
 	
-	@Column(columnDefinition = "bigint default 0")
-	private long likes;
+	@JsonManagedReference
+	@OneToMany(mappedBy="newsfeed", cascade = CascadeType.ALL)
+	private List<FeedActivity> likes;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy="newsfeed", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 	

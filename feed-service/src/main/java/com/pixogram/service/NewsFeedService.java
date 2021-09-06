@@ -11,7 +11,7 @@ import com.pixogram.entity.NewsFeed;
 @Service
 public interface NewsFeedService  {
 
-	NewsFeed saveNewsFeed(String feed,List<MultipartFile> files, String username) throws CustomException;
+	NewsFeed saveNewsFeed(String feed,List<MultipartFile> files, String username, String uri) throws CustomException;
 
 	List<NewsFeed> getLatestNewsFeed(String username);
 

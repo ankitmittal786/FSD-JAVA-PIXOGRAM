@@ -23,13 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("account")
 public class AccountController {
 	
-	
+	@Autowired
 	private AccountService accountService;	
 	
-	@Autowired
-	AccountController(){
-		accountService=new AccountServiceImpl();
-	}
+	
 	
 	@GetMapping("/getFollowingUserList")
 	public Map<String, Object> getFollowingUserList(@RequestParam("userId") final String userId,

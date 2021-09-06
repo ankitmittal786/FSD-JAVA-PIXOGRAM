@@ -15,13 +15,19 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment implements Serializable {
 
 	/**
@@ -35,11 +41,13 @@ public class Comment implements Serializable {
 
     private String reply;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "newsfeed_id") 
+    @JsonBackReference
+	@ManyToOne
+    @JoinColumn(name="newsfeed_id")
     private NewsFeed newsfeed;
 	
 	private String username;
+	private String usernameURI;
 	
 	private Date dateTime;
 

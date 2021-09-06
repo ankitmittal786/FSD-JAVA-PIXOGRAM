@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,16 +37,15 @@ public class FeedActivity  implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "newsfeed_id") 
-    private NewsFeed newsfeed;
-	
 	private String username;
 	
 	private Date dateTime;
-	
-	private String  likedby;
 
-	private String  UsernameURI;
+	private String  usernameURI;
+	
+	@JsonBackReference
+	@ManyToOne
+    @JoinColumn(name="newsfeed_id")
+    private NewsFeed newsfeed;
 
 }
